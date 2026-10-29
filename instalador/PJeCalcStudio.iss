@@ -53,6 +53,13 @@ Name: "atalhodesktop"; Description: "Criar atalho na Área de Trabalho"; GroupDe
 [Files]
 Source: "{#Origem}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
+[InstallDelete]
+; arquivos que deixaram de existir no programa (o instalador só acrescenta e troca; estes sobrariam de versões antigas)
+Type: files; Name: "{app}\ponte\licenca.py"
+Type: files; Name: "{app}\ponte\assinatura.py"
+Type: files; Name: "{app}\tests\licenca_fluxo.py"
+Type: filesandordirs; Name: "{app}\ponte\__pycache__"
+
 [Dirs]
 Name: "{localappdata}\PJeCalcStudio\dados"
 
