@@ -26,3 +26,15 @@ jobs:
         run: python -I tests/mcp_fluxo.py
       - name: Atualização automática
         run: python -I tests/atualizacao_fluxo.py
+      - name: Pacote do instalador (monta, confere o Python embutido e mostra o tamanho de cada parte)
+        shell: powershell
+        run: |
+          $ErrorActionPreference = "Stop"
+          $p = & .\tools\empacotar.ps1 -Python $env:pythonLocation -SemZip | Select-Object -Last 1
+          $partes = Get-ChildItem $p, "$p\python", "$p\python\Lib", "$p\python\DLLs" | ForEach-Object {
+            $b = if ($_.PSIsContainer) { (Get-ChildItem $_.FullName -Recurse -File | Measure-Object Length -Sum).Sum } else { $_.Length }
+            [pscustomobject]@{ MB = [math]::Round($b / 1MB, 1); Item = $_.FullName.Substring($p.Length + 1) }
+          } | Sort-Object MB -Descending | Select-Object -First 15
+          $total = (Get-ChildItem $p -Recurse -File | Measure-Object Length -Sum).Sum / 1MB
+          "::notice title=Pacote::{0:N1} MB no total; maiores: {1}" -f $total, (($partes | ForEach-Object { "$($_.Item) $($_.MB) MB" }) -join "; ")
+          if ($total -gt 60) { throw ("Pacote com {0:N1} MB: algo grande entrou no instalador." -f $total) }
