@@ -3,6 +3,10 @@
 Cada versão publicada tem uma seção aqui. O texto da seção vira a página da versão no GitHub e o aviso de
 atualização dentro do Studio, então escreva para quem usa: curto e sem termos técnicos.
 
+## 0.2.1
+
+- Instalador quatro vezes menor: o download caiu de 44 MB para cerca de 10 MB.
+
 ## 0.2.0
 
 - Primeira versão pública e gratuita, com código aberto (licença MIT).
