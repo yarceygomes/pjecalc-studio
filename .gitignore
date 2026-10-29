@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.pyc
+
+# Python portátil e arquivos gerados pelo instalador (montados por tools/empacotar.ps1)
+/python/
+/dist/
+/instalacao.json
+/COMO USAR.html
+unins000.*
+
+# Dados locais: cálculos, configurações e registros (nunca vão para o repositório)
+/dados/
+*.log
+*.log.anterior
+servidor.out
+
+# Cópias de trabalho
+backup-*/
+*.zip
+
+# Certificados de assinatura de código
+*.pfx
+*.p12

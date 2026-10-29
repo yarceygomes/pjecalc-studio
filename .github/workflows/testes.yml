@@ -1,0 +1,28 @@
+# Roda os testes que não precisam do PJe-Calc a cada envio de código e em cada pull request.
+name: Testes
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  testes:
+    runs-on: windows-latest
+    env:
+      PYTHONIOENCODING: utf-8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+          architecture: x64
+      - name: Testes unitários
+        run: python -I tests/test_unidades.py
+      - name: Assistente Claude (MCP), pelas pontes Python e Node
+        run: python -I tests/mcp_fluxo.py
+      - name: Atualização automática
+        run: python -I tests/atualizacao_fluxo.py

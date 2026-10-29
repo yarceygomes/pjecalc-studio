@@ -1,0 +1,43 @@
+PJe-Calc Studio - interface local para o PJe-Calc Cidadao
+==========================================================
+
+Os calculos continuam sendo feitos pelo PJe-Calc Cidadao instalado no seu computador.
+O PJe-Calc Studio apenas organiza o preenchimento, confere os dados e opera as telas oficiais.
+Nada e enviado para a internet: tudo roda no proprio computador.
+
+>>> O passo a passo completo, com exemplos, esta no arquivo "COMO USAR.html"
+>>> (de dois cliques nele para abrir no navegador; funciona sem internet).
+
+O QUE VOCE PRECISA
+  - Windows 10 ou 11 (64 bits).
+  - PJe-Calc Cidadao instalado pelo instalador oficial (testado com a versao 2.16.0).
+  - Nao precisa instalar Python nem mais nada: ele ja vem junto.
+
+USO (todo dia)
+  1. Abra o PJe-Calc pelo atalho oficial e espere a tela inicial aparecer.
+  2. Abra o "PJe-Calc Studio" pelo menu Iniciar (ou pelo atalho da Area de Trabalho).
+     O navegador abre em  http://127.0.0.1:8765/
+  3. Pode fechar a aba do navegador quando quiser: o Studio continua aberto em segundo plano
+     e o atalho abre a aba de novo.
+
+PRIMEIROS PASSOS
+  - Em Configuracoes, informe seu nome e confira o endereco do PJe-Calc
+    (http://127.0.0.1:9257/pjecalc/). Use o botao Diagnostico para testar a ligacao.
+  - Crie um calculo (em branco, por modelo ou importando um .PJC) e siga as etapas.
+  - "Enviar ao PJe-Calc" preenche as telas oficiais; "Calcular" liquida e guarda
+    o relatorio oficial (HTML e PDF) e o arquivo .PJC.
+
+SEUS CALCULOS
+  - Ficam em %LOCALAPPDATA%\PJeCalcStudio\dados, fora da pasta do programa:
+    atualizar ou desinstalar o Studio nao apaga nenhum calculo.
+  - Use Configuracoes > Criar copia de seguranca de vez em quando.
+
+ATUALIZACOES
+  - O Studio avisa no topo da tela quando sai uma versao nova. Em Configuracoes > Atualizacoes,
+    um clique baixa, instala e reabre o Studio.
+
+PROBLEMAS COMUNS
+  - "PJe-Calc desconectado": abra o PJe-Calc pelo atalho oficial e aguarde a tela inicial.
+  - A pagina nao abre: abra o PJe-Calc Studio pelo menu Iniciar de novo, ou acesse
+    http://127.0.0.1:8765/ no navegador.
+  - Outras duvidas e problemas: pagina do projeto no GitHub, aba "Issues".

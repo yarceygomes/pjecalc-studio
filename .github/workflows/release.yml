@@ -1,0 +1,79 @@
+# Publica uma versão: ao enviar uma tag vX.Y.Z (tools/publicar-versao.ps1 faz isso), roda os testes, gera o
+# instalador com o Python embutido e cria a release no GitHub com:
+#   PJeCalcStudio-Instalador.exe         (o link "baixar" do README e a atualização automática usam este nome)
+#   PJeCalcStudio-Instalador.exe.sha256  (conferido pelo Studio antes de instalar uma atualização)
+# As notas da release vêm da seção da versão em NOVIDADES.md.
+#
+# Assinatura de código (opcional): com os segredos CERTIFICADO_PFX_BASE64 (o .pfx em base64) e
+# CERTIFICADO_PFX_SENHA configurados no repositório, o instalador sai assinado e o Windows não mostra
+# "editor desconhecido".
+name: Publicar versão
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  instalador:
+    runs-on: windows-latest
+    env:
+      PYTHONIOENCODING: utf-8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+          architecture: x64
+
+      - name: Conferir a versão
+        shell: pwsh
+        run: |
+          $tag = "${{ github.ref_name }}".TrimStart("v")
+          $versao = (Select-String -Path servidor.py -Pattern '^VERSAO_APP = "([0-9.]+)"').Matches[0].Groups[1].Value
+          if ($tag -ne $versao) { throw "A tag v$tag não bate com VERSAO_APP = $versao em servidor.py." }
+          if (-not (Select-String -Path NOVIDADES.md -Pattern "^## $([regex]::Escape($versao))\b" -Quiet)) { throw "NOVIDADES.md não tem a seção '## $versao'." }
+
+      - name: Testes
+        run: |
+          python -I tests/test_unidades.py
+          python -I tests/mcp_fluxo.py
+          python -I tests/atualizacao_fluxo.py
+
+      - name: Instalar o Inno Setup
+        run: choco install innosetup --no-progress -y
+
+      - name: Gerar o instalador
+        shell: powershell
+        env:
+          CERTIFICADO_PFX_BASE64: ${{ secrets.CERTIFICADO_PFX_BASE64 }}
+          PJSTUDIO_PFX_SENHA: ${{ secrets.CERTIFICADO_PFX_SENHA }}
+        run: |
+          $ErrorActionPreference = "Stop"
+          $parametros = @{ Python = $env:pythonLocation; Saida = "dist" }
+          if ($env:CERTIFICADO_PFX_BASE64) {
+            $pfx = Join-Path $env:RUNNER_TEMP "codigo.pfx"
+            [IO.File]::WriteAllBytes($pfx, [Convert]::FromBase64String($env:CERTIFICADO_PFX_BASE64))
+            $parametros.Pfx = $pfx
+          }
+          & .\tools\gerar-instalador.ps1 @parametros
+
+      - name: Notas da versão
+        shell: pwsh
+        run: |
+          $versao = "${{ github.ref_name }}".TrimStart("v")
+          $texto = Get-Content NOVIDADES.md -Raw -Encoding UTF8
+          $m = [regex]::Match($texto, "(?ms)^## $([regex]::Escape($versao))\b[^\n]*\n(.*?)(?=^## |\z)")
+          $notas = $m.Groups[1].Value.Trim()
+          $notas += "`n`n**Para instalar:** baixe **PJeCalcStudio-Instalador.exe** aqui embaixo e dê dois cliques. Quem já tem o Studio recebe esta versão pelo aviso de atualização, dentro do próprio Studio."
+          Set-Content -Path notas.md -Value $notas -Encoding UTF8
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          name: PJe-Calc Studio ${{ github.ref_name }}
+          body_path: notas.md
+          files: |
+            dist/PJeCalcStudio-Instalador.exe
+            dist/PJeCalcStudio-Instalador.exe.sha256

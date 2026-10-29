@@ -1,0 +1,381 @@
+<title>Como usar o PJe-Calc Studio</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Literata:opsz,wght@7..72,600;7..72,700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: guia de leitura em coluna única, com faixa de etapas numeradas (a ordem é real) e quadros de aviso só onde importam */
+:root {
+  --papel: #f6f7f4;
+  --folha: #ffffff;
+  --tinta: #1d2621;
+  --tinta-2: #505c55;
+  --linha: #d9ddd6;
+  --verde: #1f6b4f;
+  --verde-suave: #e3efe8;
+  --ambar: #8a5a00;
+  --ambar-suave: #fbf0d9;
+  --codigo: #eef0eb;
+  --f-titulo: "Literata", "Georgia", "Cambria", serif;
+  --f-texto: "Atkinson Hyperlegible", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --f-mono: "IBM Plex Mono", "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --papel: #121714; --folha: #19201c; --tinta: #e6ebe7; --tinta-2: #a8b3ac; --linha: #2e3832;
+    --verde: #6cc49b; --verde-suave: #1d3328; --ambar: #f0b84d; --ambar-suave: #33280f; --codigo: #222b26;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --papel: #121714; --folha: #19201c; --tinta: #e6ebe7; --tinta-2: #a8b3ac; --linha: #2e3832;
+  --verde: #6cc49b; --verde-suave: #1d3328; --ambar: #f0b84d; --ambar-suave: #33280f; --codigo: #222b26;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--papel); color: var(--tinta); font: 17px/1.6 var(--f-texto);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.pagina { max-width: 46rem; margin: 0 auto; padding-block: 40px 64px; display: grid; gap: 40px; }
+h1, h2, h3 { font-family: var(--f-titulo); line-height: 1.2; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(1.9rem, 5vw, 2.6rem); }
+h2 { font-size: 1.5rem; }
+h3 { font-size: 1.1rem; font-family: var(--f-texto); font-weight: 700; }
+p { margin: 0; }
+a { color: var(--verde); }
+:focus-visible { outline: 3px solid var(--verde); outline-offset: 2px; }
+.rotulo { font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; color: var(--verde); font-weight: 700; }
+header { display: grid; gap: 14px; }
+header .resumo { font-size: 1.1rem; color: var(--tinta-2); max-width: 38rem; }
+.indice { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.indice a { display: inline-block; padding: 6px 12px; border: 1px solid var(--linha); border-radius: 999px; text-decoration: none; color: var(--tinta); font-size: .92rem; background: var(--folha); }
+.indice a:hover { border-color: var(--verde); }
+section { display: grid; gap: 16px; }
+section > header { gap: 6px; }
+.secao-desc { color: var(--tinta-2); }
+ol.passos { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; counter-reset: passo; }
+ol.passos > li { counter-increment: passo; display: grid; grid-template-columns: 2.4rem 1fr; gap: 14px; padding: 16px 0; border-top: 1px solid var(--linha); }
+ol.passos > li:last-child { border-bottom: 1px solid var(--linha); }
+ol.passos > li::before {
+  content: counter(passo); width: 2.4rem; height: 2.4rem; border-radius: 50%; display: grid; place-items: center;
+  background: var(--verde); color: var(--folha); font-weight: 700; font-variant-numeric: tabular-nums;
+}
+ol.passos > li > div { display: grid; gap: 6px; min-width: 0; }
+.nota { color: var(--tinta-2); font-size: .95rem; }
+.quadro { border-radius: 10px; padding: 14px 16px; display: grid; gap: 6px; }
+.quadro.importante { background: var(--ambar-suave); border: 1px solid color-mix(in srgb, var(--ambar) 35%, transparent); }
+.quadro.importante strong:first-child { color: var(--ambar); }
+.quadro.dica { background: var(--verde-suave); }
+.quadro ul { margin: 0; padding-left: 20px; }
+code, kbd, .endereco { font-family: var(--f-mono); font-size: .9em; }
+code { background: var(--codigo); padding: 1px 6px; border-radius: 4px; word-break: break-word; }
+kbd { border: 1px solid var(--linha); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; background: var(--folha); white-space: nowrap; }
+.copiar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; background: var(--folha); border: 1px solid var(--linha); border-radius: 8px; padding: 8px 10px; }
+.copiar .endereco { flex: 1 1 14rem; min-width: 0; word-break: break-all; user-select: all; }
+.copiar button { font: inherit; font-size: .88rem; border: 1px solid var(--verde); color: var(--verde); background: transparent; border-radius: 6px; padding: 4px 10px; cursor: pointer; }
+.copiar button:hover { background: var(--verde-suave); }
+.tabela-rolagem { overflow-x: auto; border: 1px solid var(--linha); border-radius: 10px; background: var(--folha); }
+table { border-collapse: collapse; width: 100%; font-size: .95rem; }
+th, td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--linha); }
+tr:last-child td { border-bottom: 0; }
+th { font-size: .8rem; letter-spacing: .05em; text-transform: uppercase; color: var(--tinta-2); background: var(--codigo); }
+td:first-child { font-weight: 700; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.teclas { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 8px 20px; margin: 0; }
+.teclas div { display: flex; gap: 10px; align-items: baseline; }
+.teclas dt { min-width: 5.5rem; }
+.teclas dd { margin: 0; color: var(--tinta-2); }
+.problemas { display: grid; gap: 10px; }
+.problemas details { background: var(--folha); border: 1px solid var(--linha); border-radius: 10px; padding: 12px 16px; }
+.problemas summary { cursor: pointer; font-weight: 700; }
+.problemas details p { margin-top: 8px; color: var(--tinta-2); }
+footer { color: var(--tinta-2); font-size: .92rem; border-top: 1px solid var(--linha); padding-top: 16px; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+</style>
+
+<div class="pagina">
+  <header>
+    <span class="rotulo">Guia para quem vai usar</span>
+    <h1>Como usar o PJe-Calc Studio</h1>
+    <p class="resumo">O PJe-Calc Studio é uma tela mais simples para preencher cálculos trabalhistas. Quem calcula continua sendo o PJe-Calc Cidadão instalado no seu computador: o Studio só organiza o preenchimento, confere os dados e lança tudo nas telas oficiais por você. Nada sai do seu computador.</p>
+    <ul class="indice" aria-label="Partes do guia">
+      <li><a href="#instalar">1. Instalar</a></li>
+      <li><a href="#abrir">2. Abrir</a></li>
+      <li><a href="#configurar">3. Configurar</a></li>
+      <li><a href="#calcular">4. Fazer um cálculo</a></li>
+      <li><a href="#horas">Horas extras mês a mês</a></li>
+      <li><a href="#original">Telas do PJe-Calc</a></li>
+      <li><a href="#padroes">Padrões e modelos</a></li>
+      <li><a href="#executar">5. Enviar e calcular</a></li>
+      <li><a href="#guardar">6. Guardar e enviar</a></li>
+      <li><a href="#problemas">Problemas comuns</a></li>
+    </ul>
+  </header>
+
+  <div class="quadro importante">
+    <strong>Antes de começar, você precisa ter:</strong>
+    <ul>
+      <li>Windows 10 ou 11.</li>
+      <li>O <strong>PJe-Calc Cidadão 2.16.0</strong> instalado pelo instalador oficial do TRT8, com as tabelas atualizadas (no PJe-Calc: Tabelas › Atualização de Tabelas e Índices).</li>
+      <li>O instalador <code>PJeCalcStudio-Instalador.exe</code>, baixado da <a href="https://github.com/yarceygomes/pjecalc-studio">página do projeto</a>. Não precisa instalar Python nem mais nada: ele já vem dentro do instalador.</li>
+    </ul>
+  </div>
+
+  <section id="instalar" aria-labelledby="t-instalar">
+    <header><span class="rotulo">Parte 1 · uma vez só</span><h2 id="t-instalar">Instalar</h2></header>
+    <ol class="passos">
+      <li><div>
+        <h3>Dê dois cliques no instalador</h3>
+        <p>Abra o arquivo <code>PJeCalcStudio-Instalador.exe</code> que você baixou e clique em <strong>Avançar</strong>, <strong>Instalar</strong> e <strong>Concluir</strong>. Não precisa de senha de administrador.</p>
+        <p class="nota">Os seus cálculos ficam numa pasta separada do programa: atualizar ou desinstalar o Studio não apaga nenhum cálculo.</p>
+      </div></li>
+      <li><div>
+        <h3>Se o Windows mostrar um aviso azul</h3>
+        <p>Pode aparecer “O Windows protegeu o computador”. Isso acontece com programas novos que ainda não têm um certificado pago de assinatura. Clique em <strong>Mais informações</strong> › <strong>Executar assim mesmo</strong>.</p>
+      </div></li>
+      <li><div>
+        <h3>Pronto</h3>
+        <p>Ao concluir, o Studio abre sozinho no navegador. No menu Iniciar ficam os atalhos <strong>PJe-Calc Studio</strong> e <strong>Como usar o PJe-Calc Studio</strong> (este guia).</p>
+      </div></li>
+    </ol>
+  </section>
+
+  <section id="abrir" aria-labelledby="t-abrir">
+    <header><span class="rotulo">Parte 2 · todo dia</span><h2 id="t-abrir">Abrir</h2></header>
+    <ol class="passos">
+      <li><div>
+        <h3>Abra primeiro o PJe-Calc</h3>
+        <p>Use o atalho oficial do PJe-Calc (o mesmo de sempre) e espere a tela inicial dele aparecer no navegador. Pode deixar essa janela aberta.</p>
+      </div></li>
+      <li><div>
+        <h3>Depois, abra o Studio</h3>
+        <p>Abra o <strong>PJe-Calc Studio</strong> pelo menu Iniciar (ou pelo atalho da Área de Trabalho). O navegador mostra o Studio.</p>
+        <p class="nota">O Studio fica funcionando em segundo plano, sem janela. Se você fechar a aba do navegador, o mesmo atalho abre a aba de novo.</p>
+      </div></li>
+      <li><div>
+        <h3>Se o navegador não abrir sozinho</h3>
+        <p>Abra o navegador e digite este endereço:</p>
+        <div class="copiar"><span class="endereco" id="end-studio">http://127.0.0.1:8765/</span><button type="button" data-copiar="end-studio">Copiar</button></div>
+      </div></li>
+      <li><div>
+        <h3>Para encerrar</h3>
+        <p>Basta fechar a aba do navegador. Seus cálculos ficam salvos automaticamente enquanto você digita (o rodapé mostra “Rascunho salvo”).</p>
+      </div></li>
+    </ol>
+  </section>
+
+  <section id="configurar" aria-labelledby="t-configurar">
+    <header><span class="rotulo">Parte 3 · no primeiro uso</span><h2 id="t-configurar">Configurar</h2>
+      <p class="secao-desc">No menu da esquerda, abra <strong>Configurações e diagnóstico</strong>.</p></header>
+    <ol class="passos">
+      <li><div>
+        <h3>Informe seu nome</h3>
+        <p>Ele aparece no histórico de alterações de cada cálculo, para saber quem mudou o quê.</p>
+      </div></li>
+      <li><div>
+        <h3>Confira o endereço do PJe-Calc</h3>
+        <p>Na instalação padrão é este (normalmente já vem preenchido):</p>
+        <div class="copiar"><span class="endereco" id="end-pjecalc">http://127.0.0.1:9257/pjecalc/</span><button type="button" data-copiar="end-pjecalc">Copiar</button></div>
+      </div></li>
+      <li><div>
+        <h3>Indique a pasta de instalação do PJe-Calc</h3>
+        <p>É a pasta que tem o arquivo <code>iniciarPjeCalc.bat</code>. Com ela, o Studio mostra os textos de ajuda oficiais do próprio PJe-Calc ao lado de cada campo.</p>
+      </div></li>
+      <li><div>
+        <h3>Salve e clique em “Executar diagnóstico”</h3>
+        <p>O diagnóstico confirma que o PJe-Calc está respondendo e qual versão está instalada. No topo da tela, o selo verde <strong>“PJe-Calc 2.16.0 conectado”</strong> indica que está tudo certo.</p>
+      </div></li>
+    </ol>
+  </section>
+
+  <section id="calcular" aria-labelledby="t-calcular">
+    <header><span class="rotulo">Parte 4</span><h2 id="t-calcular">Fazer um cálculo</h2>
+      <p class="secao-desc">No painel inicial, clique em <strong>Novo cálculo</strong>. Você pode começar em branco, a partir de um modelo pronto (rescisão, horas extras etc.) ou clicar em <strong>Importar arquivo .PJC</strong> para abrir um arquivo de cálculo. Se o cálculo já existe no seu PJe-Calc, use <strong>Trazer do PJe-Calc</strong>: procure pelo número ou pelo nome do reclamante e clique em <strong>Trazer</strong>; o Studio passa a trabalhar nesse mesmo cálculo, sem criar uma cópia. Depois é só seguir as etapas da coluna da esquerda, na ordem, com o botão <strong>Continuar</strong> no rodapé. Cada etapa mostra se está pronta, em andamento, usando o padrão do PJe-Calc ou com pendência.</p></header>
+    <div class="tabela-rolagem">
+      <table>
+        <thead><tr><th scope="col">Fase › etapa</th><th scope="col">O que você preenche ou faz</th></tr></thead>
+        <tbody>
+          <tr><td>Caso › Partes e processo</td><td>Número do processo, reclamante, reclamada (CPF/CNPJ) e local da prestação de serviços.</td></tr>
+          <tr><td>Caso › Contrato</td><td>Admissão, demissão, ajuizamento, prescrição, maior e última remuneração, aviso prévio.</td></tr>
+          <tr><td>Dados › Histórico salarial</td><td>Salário mês a mês. Dá para colar direto de uma planilha ou importar CSV/Excel.</td></tr>
+          <tr><td>Dados › Jornada</td><td>Carga horária mensal (divisor, por exemplo 220) e se sábado é dia útil. Opcional: sem alteração vale o padrão do PJe-Calc.</td></tr>
+          <tr><td>Dados › Verbas</td><td>As parcelas do pedido: escolha no catálogo oficial ou crie uma <strong>verba manual</strong>. Aqui também ficam as <a href="#horas">quantidades mês a mês</a>.</td></tr>
+          <tr><td>Dados › Reflexos e FGTS</td><td>Quais reflexos de cada verba entram (13º, férias, aviso, RSR…) e o FGTS com multa.</td></tr>
+          <tr><td>Dados › Correção e juros</td><td>Data de liquidação, índice de correção e juros.</td></tr>
+          <tr><td>Conferência › Revisar tudo</td><td>Resumo de tudo o que foi preenchido, seção por seção, com <strong>Alterar</strong> ao lado de cada item (leva direto ao campo).</td></tr>
+          <tr><td>Conferência › Enviar e calcular</td><td>Enviar os dados ao PJe-Calc e calcular.</td></tr>
+          <tr><td>Resultado › Resultado</td><td>Líquido, descontos, total da reclamada e valores por verba e por mês.</td></tr>
+          <tr><td>Resultado › Documentos</td><td>Relatório oficial (PDF e HTML), arquivo .PJC e planilha de conferência.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="quadro dica">
+      <strong>Campo vazio, zero e “não sei” são diferentes.</strong>
+      <p>Deixe vazio o que você não informou, digite <code>0,00</code> quando o valor é zero e digite <code>?</code> quando o valor é desconhecido. A etapa Revisar tudo avisa sobre os vazios e os desconhecidos antes de enviar.</p>
+    </div>
+    <p>Sob cada campo aparece uma instrução curta. O botão <strong>?</strong> ao lado do nome do campo abre uma ajuda completa ao lado (no celular, na parte de baixo): o que é, quando preencher, como preencher, um exemplo preenchido e o erro mais comum. Feche com o <strong>×</strong> ou a tecla <kbd>Esc</kbd>; o que você digitou continua lá. Campos marcados como <strong>“decisão profissional”</strong> dependem do caso concreto (sentença, acordo, convenção): o Studio não decide por você.</p>
+  </section>
+
+  <section id="horas" aria-labelledby="t-horas">
+    <header><span class="rotulo">Na etapa Verbas</span><h2 id="t-horas">Horas extras e outras quantidades mês a mês</h2>
+      <p class="secao-desc">Exemplo: horas extras 50% com uma quantidade diferente de horas em cada mês.</p></header>
+    <ol class="passos">
+      <li><div>
+        <h3>Marque a verba no catálogo</h3>
+        <p>Digite “horas” no filtro e marque <strong>HORAS EXTRAS 50%</strong>. Ela aparece em “Verbas selecionadas”. Marque o histórico salarial que forma a base (por exemplo, SALÁRIO BASE).</p>
+      </div></li>
+      <li><div>
+        <h3>Abra “Ocorrências mês a mês”</h3>
+        <p>No cartão da verba, clique em <strong>Ocorrências mês a mês</strong> › <strong>Gerar competências do período</strong>. Aparece uma linha por mês do contrato.</p>
+      </div></li>
+      <li><div>
+        <h3>Digite ou cole as quantidades</h3>
+        <p>Na coluna <strong>Quantidade</strong>, digite as horas de cada mês (por exemplo <code>12,5</code>) e tecle <kbd>Enter</kbd> para descer. Se as horas estão numa planilha, copie a coluna lá e cole aqui com <kbd>Ctrl</kbd>+<kbd>V</kbd>.</p>
+        <p class="nota">Deixe a célula vazia nos meses em que quer manter o que o PJe-Calc calcular. Use a coluna “Devido” só para impor um valor fixo no mês, e desmarque “Ativa” para tirar o mês do cálculo.</p>
+      </div></li>
+      <li><div>
+        <h3>Depois da primeira gravação, compare</h3>
+        <p>O botão <strong>Carregar do PJe-Calc</strong> mostra, ao lado, o que o PJe-Calc gerou para cada mês, para você conferir.</p>
+      </div></li>
+    </ol>
+    <dl class="teclas" aria-label="Teclas da tabela">
+      <div><dt><kbd>Enter</kbd></dt><dd>confirma e desce</dd></div>
+      <div><dt><kbd>Tab</kbd></dt><dd>vai para a coluna ao lado</dd></div>
+      <div><dt><kbd>Ctrl</kbd>+<kbd>V</kbd></dt><dd>cola várias linhas de uma vez</dd></div>
+      <div><dt><kbd>Ctrl</kbd>+<kbd>D</kbd></dt><dd>repete o 1º valor na seleção</dd></div>
+      <div><dt><kbd>Delete</kbd></dt><dd>limpa as células selecionadas</dd></div>
+      <div><dt><kbd>Espaço</kbd></dt><dd>marca ou desmarca “Ativa”</dd></div>
+    </dl>
+    <div class="quadro dica">
+      <strong>Verba que não está no catálogo?</strong>
+      <p>Em <strong>Lançamento manual</strong>, clique em <strong>Adicionar verba manual</strong>: dê um nome, escolha o assunto CNJ, a base, o divisor, o multiplicador e a quantidade. Para um reflexo próprio (por exemplo, integração de uma verba em outra), escolha <strong>Tipo: Reflexo de outra verba</strong> e indique a verba principal.</p>
+    </div>
+  </section>
+
+  <section id="padroes" aria-labelledby="t-padroes">
+    <header><span class="rotulo">Sem retrabalho</span><h2 id="t-padroes">Padrões e modelos do escritório</h2>
+      <p class="secao-desc">O que o escritório repete em todo cálculo é preenchido uma vez só.</p></header>
+    <ol class="passos">
+      <li><div>
+        <h3>Padrão: uma função do PJe-Calc preenchida do seu jeito</h3>
+        <p>Abra uma função (por exemplo, <strong>Honorários</strong>), preencha como sempre faz e clique em <strong>Salvar como padrão</strong>. Desmarque o que é só daquele caso. Nos próximos cálculos, use <strong>Aplicar padrão</strong> na mesma função, ou marque o padrão como <strong>automático</strong> para entrar sozinho em todo cálculo novo.</p>
+      </div></li>
+      <li><div>
+        <h3>Modelo: o cálculo novo já começa pronto</h3>
+        <p>Em <strong>Modelos de cálculo › Novo modelo</strong>, escolha o tipo (liquidação de sentença, execução, atualização…), preencha as etapas como num cálculo e clique em <strong>Salvar modelo</strong>. O modelo pode incluir padrões. Com <strong>Usar como padrão em “Novo cálculo”</strong>, ele já vem marcado.</p>
+        <p class="nota">Partes, processo e documentos nunca entram em modelos.</p>
+      </div></li>
+      <li><div>
+        <h3>Dúvida em algum campo?</h3>
+        <p>Todo campo tem um <strong>?</strong> (ou tecla F1) com o que é, como preencher, exemplo e o texto de ajuda oficial do PJe-Calc quando existe. O “?” ao lado do título explica a função inteira.</p>
+      </div></li>
+    </ol>
+  </section>
+
+  <section id="original" aria-labelledby="t-original">
+    <header><span class="rotulo">Tudo o que o PJe-Calc faz</span><h2 id="t-original">Funções do PJe-Calc dentro do Studio</h2>
+      <p class="secao-desc">O Studio tem formulários próprios para o que mais se usa. Todo o resto do PJe-Calc continua disponível, com o mesmo visual do Studio, já no cálculo certo. Quem valida e grava continua sendo o PJe-Calc.</p></header>
+    <ol class="passos">
+      <li><div>
+        <h3>Abra a tela pelo menu da esquerda</h3>
+        <p>Dentro de um cálculo, em <strong>Funções do PJe-Calc</strong>, clique em <strong>Todas as funções do PJe-Calc</strong> e escolha (por exemplo, <strong>Faltas</strong> ou <strong>Honorários</strong>). Em cada etapa do Studio, o link <strong>Todos os campos do PJe-Calc</strong>, no alto, abre a função equivalente com todos os campos.</p>
+        <p class="nota">O cálculo precisa ter sido enviado ao PJe-Calc pelo menos uma vez. Se não foi, o Studio mostra o botão <strong>Enviar ao PJe-Calc</strong>.</p>
+      </div></li>
+      <li><div>
+        <h3>Espere a linha de status confirmar</h3>
+        <p>O Studio abre a função no PJe-Calc e mostra os campos. Quando aparecer o nome da função com o “cálculo nº …”, preencha e use os botões normalmente. As mensagens do PJe-Calc (sucesso ou o que falta corrigir) aparecem no alto, e os erros também junto a cada campo. O que você salvar ali é gravado direto no PJe-Calc.</p>
+      </div></li>
+      <li><div>
+        <h3>Calcule de novo pelo Studio</h3>
+        <p>Depois de mudar algo numa tela do PJe-Calc, clique em <strong>Calcular</strong> no alto. Enquanto isso não for feito, o Studio avisa que o resultado pode estar desatualizado.</p>
+      </div></li>
+    </ol>
+    <div class="tabela-rolagem">
+      <table>
+        <thead><tr><th scope="col">Onde</th><th scope="col">Telas do PJe-Calc disponíveis</th></tr></thead>
+        <tbody>
+          <tr><td>Cálculo</td><td>Dados do Cálculo (completa), Faltas, Férias, Histórico Salarial, Verbas, Cartão de Ponto, Salário-família, Seguro-desemprego, FGTS, Contribuição Social, Previdência Privada, Pensão Alimentícia, Imposto de Renda, Multas e Indenizações, Honorários, Custas Judiciais, Correção, Juros e Multa.</td></tr>
+          <tr><td>Operações</td><td>Liquidar, Imprimir, Exportar.</td></tr>
+          <tr><td>Atualização</td><td>Dados do Pagamento, Pensão Alimentícia, Multas e Indenizações, Honorários, Custas Judiciais, Liquidar Atualização, Imprimir Atualização.</td></tr>
+          <tr><td>Fora do cálculo</td><td>No menu da esquerda do painel: Tela inicial, Novo Cálculo Externo, Relatório Consolidado, Buscar e as 13 <strong>Tabelas</strong> (salário mínimo, índices, juros, atualização de tabelas…).</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="quadro importante">
+      <strong>O Studio não apaga o que você fez no PJe-Calc.</strong>
+      <p>Ao enviar de novo, o Studio reenvia só o que você mudou nele. Faltas, férias, honorários, custas e as outras telas sem formulário no Studio nunca são alteradas por ele. Se um mesmo campo foi preenchido nos dois lugares, vale o do Studio no próximo envio.</p>
+    </div>
+  </section>
+
+  <section id="executar" aria-labelledby="t-executar">
+    <header><span class="rotulo">Parte 5</span><h2 id="t-executar">Enviar e calcular</h2>
+      <p class="secao-desc">Os botões <strong>Enviar ao PJe-Calc</strong> e <strong>Calcular</strong> ficam sempre no alto do cálculo. Logo abaixo deles, três indicadores mostram se o rascunho está salvo, se os dados já foram enviados ao PJe-Calc e se o resultado está atualizado.</p></header>
+    <ol class="passos">
+      <li><div>
+        <h3>Enviar ao PJe-Calc</h3>
+        <p>O Studio preenche as telas oficiais do PJe-Calc com o que você digitou e mostra as mensagens que o próprio PJe-Calc devolveu, uma por tela. Se houver erro, a mensagem diz o campo e a etapa para corrigir.</p>
+      </div></li>
+      <li><div>
+        <h3>Confira as pendências</h3>
+        <p>Na etapa <strong>Revisar tudo</strong> aparecem as pendências do PJe-Calc e o <strong>quadro de critérios</strong>, com a fórmula que o PJe-Calc montou para cada verba. Pendências do tipo “Erro” impedem o cálculo; as demais são avisos para você ler.</p>
+      </div></li>
+      <li><div>
+        <h3>Calcular</h3>
+        <p>O PJe-Calc liquida o cálculo. O resultado aparece na tela (líquido, total da reclamada, valores por verba e por mês) e o relatório oficial fica guardado.</p>
+        <p class="nota">Se você mudar alguma coisa depois, o Studio avisa que o resultado ficou desatualizado. É só calcular de novo.</p>
+      </div></li>
+    </ol>
+  </section>
+
+  <section id="guardar" aria-labelledby="t-guardar">
+    <header><span class="rotulo">Parte 6</span><h2 id="t-guardar">Guardar e enviar</h2></header>
+    <ol class="passos">
+      <li><div>
+        <h3>Baixe os arquivos oficiais</h3>
+        <p>Na etapa <strong>Documentos</strong> (ou na aba “Documentos oficiais” do resultado): o <strong>relatório em PDF</strong> é o que vai para o processo; o arquivo <strong>.PJC</strong> é o cálculo em si, que qualquer pessoa abre no PJe-Calc (é ele que você manda para outra pessoa ou anexa no PJe).</p>
+      </div></li>
+      <li><div>
+        <h3>Faça cópias de segurança</h3>
+        <p>Em <strong>Configurações e diagnóstico</strong> › <strong>Criar cópia de segurança agora</strong>. Guarde o arquivo gerado num pendrive ou na nuvem. Copiar a pasta <code>dados</code> inteira também funciona.</p>
+      </div></li>
+    </ol>
+  </section>
+
+  <section id="problemas" aria-labelledby="t-problemas">
+    <header><span class="rotulo">Se algo der errado</span><h2 id="t-problemas">Problemas comuns</h2></header>
+    <div class="problemas">
+      <details><summary>“PJe-Calc não respondeu” ou selo vermelho no topo</summary>
+        <p>O PJe-Calc não está aberto ou ainda está carregando. Abra pelo atalho oficial, espere a tela inicial dele e clique em “Executar diagnóstico” em Configurações.</p></details>
+      <details><summary>A página do Studio não abre</summary>
+        <p>Abra o <strong>PJe-Calc Studio</strong> pelo menu Iniciar de novo, ou digite <code>http://127.0.0.1:8765/</code> no navegador. Se continuar sem abrir, reinicie o computador e tente de novo.</p></details>
+      <details><summary>Aparece “versão não validada”</summary>
+        <p>O seu PJe-Calc não é a versão 2.16.0. O Studio pode funcionar, mas confira o resultado com atenção no próprio PJe-Calc e, se puder, conte na <a href="https://github.com/yarceygomes/pjecalc-studio/issues">página de problemas do projeto</a>.</p></details>
+      <details><summary>Um botão ou campo “não foi encontrado” ao gravar</summary>
+        <p>A tela do PJe-Calc mudou nessa versão. Anote a mensagem e conte na <a href="https://github.com/yarceygomes/pjecalc-studio/issues">página de problemas do projeto</a>. Enquanto isso, faça aquela parte em <strong>Funções do PJe-Calc</strong>, no menu à esquerda.</p></details>
+      <details><summary>Quero ver o cálculo no próprio PJe-Calc</summary>
+        <p>Use <strong>Todos os campos do PJe-Calc</strong> no alto de cada etapa, ou o menu <strong>Funções do PJe-Calc</strong> à esquerda. No programa PJe-Calc: no PJe-Calc, Cálculo › Buscar, com o número que o Studio mostra no alto do cálculo (“cálculo nº …”).</p></details>
+      <details><summary>A tela do PJe-Calc mostra “Erro Interno no Servidor” ou ficou parada</summary>
+        <p>Clique em <strong>Recarregar</strong>, acima dos campos: o Studio abre a função de novo no PJe-Calc. Faça isso também se você enviou dados pelo Studio com a tela do PJe-Calc aberta, para não salvar nela valores antigos.</p></details>
+      <details><summary>O status diz “O PJe-Calc não abriu a tela … e respondeu: …”</summary>
+        <p>A mensagem é do próprio PJe-Calc (por exemplo, “Imprimir Atualização” antes de existir uma atualização liquidada). O cálculo continua aberto logo abaixo para você seguir pelo menu dele.</p></details>
+      <details><summary>Já tenho o cálculo feito no PJe-Calc</summary>
+        <p>No painel, <strong>Trazer do PJe-Calc</strong>. Se ele não aparecer na lista, digite o número do cálculo ou o nome do reclamante e clique em <strong>Procurar</strong>: sem busca, o PJe-Calc mostra só os mais recentes.</p></details>
+    </div>
+  </section>
+
+  <footer>
+    O resultado é sempre do PJe-Calc Cidadão oficial. As escolhas jurídicas (base, divisor, reflexos, índices) são de quem faz o cálculo: confira o quadro de critérios antes de juntar o relatório ao processo.
+  </footer>
+</div>
+
+<script>
+document.querySelectorAll("[data-copiar]").forEach((b) => {
+  b.addEventListener("click", () => {
+    const alvo = document.getElementById(b.dataset.copiar);
+    const texto = alvo.textContent.trim();
+    const marcar = () => { const r = document.createRange(); r.selectNodeContents(alvo); const s = getSelection(); s.removeAllRanges(); s.addRange(r); };
+    const ok = () => { b.textContent = "Copiado"; setTimeout(() => (b.textContent = "Copiar"), 1800); };
+    try {
+      navigator.clipboard.writeText(texto).then(ok, () => { marcar(); b.textContent = "Selecionado: Ctrl+C"; });
+    } catch { marcar(); b.textContent = "Selecionado: Ctrl+C"; }
+  });
+});
+</script>

@@ -1,0 +1,23 @@
+{
+  "manifest_version": "0.3",
+  "name": "pjecalc-studio",
+  "display_name": "PJe-Calc Studio",
+  "version": "0.0.0",
+  "description": "Deixa o Claude preparar cálculos trabalhistas no PJe-Calc Studio e enviá-los ao PJe-Calc, com a sua confirmação.",
+  "long_description": "Conecta o Claude ao PJe-Calc Studio instalado neste computador. O Claude lê e cria cálculos, responde as perguntas guiadas, preenche partes, contrato, históricos, verbas e critérios de correção com as mesmas validações da tela, confere as pendências e, só com a sua confirmação, envia ao PJe-Calc e lê o resultado oficial. Quem calcula é sempre o PJe-Calc. O PJe-Calc Studio precisa estar aberto.",
+  "author": { "name": "PJe-Calc Studio" },
+  "server": {
+    "type": "node",
+    "entry_point": "server/index.js",
+    "mcp_config": {
+      "command": "node",
+      "args": ["${__dirname}/server/index.js"]
+    }
+  },
+  "tools_generated": true,
+  "keywords": ["pje-calc", "cálculo trabalhista", "liquidação", "justiça do trabalho"],
+  "compatibility": {
+    "platforms": ["win32"],
+    "runtimes": { "node": ">=18.0.0" }
+  }
+}

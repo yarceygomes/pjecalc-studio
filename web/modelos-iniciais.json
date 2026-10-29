@@ -1,0 +1,235 @@
+[
+  {
+    "id": "rescisao-sem-justa-causa",
+    "nome": "Rescisão sem justa causa",
+    "categoria": "Rescisórias",
+    "versao": 1,
+    "revisadoEm": "2026-10-14",
+    "suporte": "completo",
+    "descricao": "Verbas rescisórias da dispensa sem justa causa: saldo de salário, aviso prévio indenizado proporcional, 13º e férias proporcionais com 1/3 e multa de 40% do FGTS.",
+    "fontes": ["CLT, arts. 477, 487 e 129-146", "Lei nº 12.506/2011 (aviso prévio proporcional)", "Lei nº 4.090/1962 (13º salário)", "CF, art. 7º, XVII", "Lei nº 8.036/1990, art. 18, §1º"],
+    "premissas": [
+      {"texto": "Verbas incluídas pelo lançamento expresso do PJe-Calc: SALDO DE SALÁRIO, AVISO PRÉVIO, 13º SALÁRIO, FÉRIAS + 1/3.", "etapa": "verbas"},
+      {"texto": "Prazo do aviso prévio apurado pelo PJe-Calc (opção “Calculado”, Lei 12.506/2011) e projetado para avos de 13º e férias.", "etapa": "contrato"},
+      {"texto": "Multa de 40% sobre o FGTS (tela FGTS do PJe-Calc).", "etapa": "reflexos"},
+      {"texto": "Base de cálculo das verbas: histórico salarial informado. Se houver mais de um histórico, escolha qual compõe a base de cada verba.", "etapa": "verbas", "confirmar": true},
+      {"texto": "Férias vencidas e períodos gozados: o PJe-Calc apura conforme a tela Férias; confira a situação de cada período aquisitivo.", "etapa": "verbas", "confirmar": true},
+      {"texto": "Pagamentos já realizados no TRCT devem ser informados como valor pago para evitar duplicidade.", "etapa": "verbas", "confirmar": true},
+      {"texto": "Correção e juros: os critérios padrão do PJe-Calc são mantidos até que você os altere na etapa Critérios de atualização.", "etapa": "atualizacao", "confirmar": true}
+    ],
+    "rascunho": {
+      "dados": {"contrato.apuracaoAvisoPrevio": "APURACAO_CALCULADA", "contrato.projetaAvisoIndenizado": true},
+      "verbas": ["SALDO DE SALÁRIO", "AVISO PRÉVIO", "13º SALÁRIO", "FÉRIAS + 1/3"],
+      "fgts": {"multa": true, "multaDoFgts": "QUARENTA_POR_CENTO"}
+    }
+  },
+  {
+    "id": "pedido-de-demissao",
+    "nome": "Pedido de demissão",
+    "categoria": "Rescisórias",
+    "versao": 1,
+    "revisadoEm": "2026-10-14",
+    "suporte": "completo",
+    "descricao": "Saldo de salário, 13º e férias proporcionais com 1/3. Sem aviso prévio indenizado pelo empregador e sem multa do FGTS.",
+    "fontes": ["CLT, arts. 477, 487, §2º, e 146-147", "Súmula 261 do TST (férias proporcionais no pedido de demissão)", "Lei nº 4.090/1962"],
+    "premissas": [
+      {"texto": "Verbas: SALDO DE SALÁRIO, 13º SALÁRIO, FÉRIAS + 1/3.", "etapa": "verbas"},
+      {"texto": "Aviso prévio não apurado (opção “Não apurar”). Se houve dispensa do cumprimento ou desconto do aviso, registre a decisão.", "etapa": "contrato", "confirmar": true},
+      {"texto": "Sem multa do FGTS.", "etapa": "reflexos"},
+      {"texto": "Base de cálculo e pagamentos já efetuados devem ser conferidos.", "etapa": "verbas", "confirmar": true}
+    ],
+    "rascunho": {
+      "dados": {"contrato.apuracaoAvisoPrevio": "NAO_APURAR", "contrato.projetaAvisoIndenizado": false},
+      "verbas": ["SALDO DE SALÁRIO", "13º SALÁRIO", "FÉRIAS + 1/3"],
+      "fgts": {"multa": false}
+    }
+  },
+  {
+    "id": "rescisao-indireta",
+    "nome": "Rescisão indireta",
+    "categoria": "Rescisórias",
+    "versao": 1,
+    "revisadoEm": "2026-10-14",
+    "suporte": "completo",
+    "descricao": "Reconhecida a falta grave do empregador, as verbas equivalem às da dispensa sem justa causa.",
+    "fontes": ["CLT, art. 483", "Lei nº 12.506/2011", "Lei nº 8.036/1990, art. 18, §1º"],
+    "premissas": [
+      {"texto": "Mesmas verbas da dispensa sem justa causa, inclusive aviso prévio indenizado e multa de 40% do FGTS.", "etapa": "verbas"},
+      {"texto": "A data de término do contrato depende da decisão (afastamento do empregado ou data fixada no julgado).", "etapa": "contrato", "confirmar": true},
+      {"texto": "Multas dos arts. 467 e 477 da CLT dependem do caso concreto e não estão incluídas.", "etapa": "verbas", "confirmar": true}
+    ],
+    "rascunho": {
+      "dados": {"contrato.apuracaoAvisoPrevio": "APURACAO_CALCULADA", "contrato.projetaAvisoIndenizado": true},
+      "verbas": ["SALDO DE SALÁRIO", "AVISO PRÉVIO", "13º SALÁRIO", "FÉRIAS + 1/3"],
+      "fgts": {"multa": true, "multaDoFgts": "QUARENTA_POR_CENTO"}
+    }
+  },
+  {
+    "id": "acordo-484a",
+    "nome": "Extinção por acordo (art. 484-A da CLT)",
+    "categoria": "Rescisórias",
+    "versao": 1,
+    "revisadoEm": "2026-10-14",
+    "suporte": "parcial",
+    "descricao": "Extinção por comum acordo: aviso prévio indenizado e indenização do FGTS pela metade; demais verbas integrais.",
+    "fontes": ["CLT, art. 484-A (Lei nº 13.467/2017)"],
+    "premissas": [
+      {"texto": "Multa do FGTS de 20% (opção oficial do PJe-Calc).", "etapa": "reflexos"},
+      {"texto": "O aviso prévio indenizado é devido pela metade: ajuste o multiplicador ou a quantidade da verba AVISO PRÉVIO no quadro de critérios e confira o resultado.", "etapa": "verbas", "confirmar": true},
+      {"texto": "Verbas: SALDO DE SALÁRIO, AVISO PRÉVIO, 13º SALÁRIO, FÉRIAS + 1/3.", "etapa": "verbas"}
+    ],
+    "rascunho": {
+      "dados": {"contrato.apuracaoAvisoPrevio": "APURACAO_CALCULADA", "contrato.projetaAvisoIndenizado": true},
+      "verbas": ["SALDO DE SALÁRIO", "AVISO PRÉVIO", "13º SALÁRIO", "FÉRIAS + 1/3"],
+      "fgts": {"multa": true, "multaDoFgts": "VINTE_POR_CENTO"}
+    }
+  },
+  {
+    "id": "diferencas-salariais",
+    "nome": "Diferenças salariais",
+    "categoria": "Parcelas",
+    "versao": 1,
+    "revisadoEm": "2026-10-14",
+    "suporte": "parcial",
+    "descricao": "Diferença entre o salário devido (piso, equiparação ou reajuste) e o salário pago, com reflexos selecionáveis.",
+    "fontes": ["CLT, arts. 461 e 457", "Súmula 6 do TST (equiparação)", "CF, art. 7º, V"],
+    "premissas": [
+      {"texto": "Verba DIFERENÇA SALARIAL incluída pelo lançamento expresso; o PJe-Calc apresenta os reflexos disponíveis para ativação.", "etapa": "verbas"},
+      {"texto": "Informe dois históricos: o salário devido (base) e o salário pago (valor pago), e associe-os na verba.", "etapa": "historico", "confirmar": true},
+      {"texto": "Reflexos em 13º, férias + 1/3, aviso prévio e FGTS dependem do pedido e da decisão.", "etapa": "reflexos", "confirmar": true}
+    ],
+    "rascunho": {"verbas": ["DIFERENÇA SALARIAL"]}
+  },
+  {
+    "id": "horas-extras",
+    "nome": "Horas extras e reflexos",
+    "categoria": "Jornada",
+    "versao": 1,
+    "revisadoEm": "2026-10-14",
+    "suporte": "parcial",
+    "descricao": "Horas extras com adicional de 50% e reflexos (RSR, 13º, férias + 1/3, aviso prévio, FGTS) conforme selecionados.",
+    "fontes": ["CF, art. 7º, XIII e XVI", "CLT, arts. 58, 59 e 64", "Súmulas 172, 264, 347 e 431 do TST", "OJ 394 da SDI-1 do TST (redação dada no IRR 10169-57.2013.5.05.0024)"],
+    "premissas": [
+      {"texto": "Verba HORAS EXTRAS 50% incluída pelo lançamento expresso.", "etapa": "verbas"},
+      {"texto": "Divisor e base: o PJe-Calc aplica a carga horária mensal informada no cálculo (padrão 220). Jornada de 40h semanais usa divisor 200 (Súmula 431 do TST).", "etapa": "jornada", "confirmar": true},
+      {"texto": "Quantidade de horas por competência: informe nas ocorrências da verba ou pela apuração do cartão de ponto na interface original.", "etapa": "jornada", "confirmar": true},
+      {"texto": "Reflexos: ative apenas os deferidos. A repercussão do RSR majorado nas demais parcelas segue a OJ 394 da SDI-1, com modulação temporal — decisão do usuário.", "etapa": "reflexos", "confirmar": true}
+    ],
+    "rascunho": {"verbas": ["HORAS EXTRAS 50%"]}
+  },
+  {
+    "id": "adicional-noturno",
+    "nome": "Adicional noturno",
+    "categoria": "Jornada",
+    "versao": 1,
+    "revisadoEm": "2026-10-14",
+    "suporte": "parcial",
+    "descricao": "Adicional noturno urbano de 20% sobre a hora diurna, com hora noturna reduzida, e reflexos.",
+    "fontes": ["CLT, art. 73", "Súmula 60 do TST", "CF, art. 7º, IX"],
+    "premissas": [
+      {"texto": "Verba ADICIONAL NOTURNO 20% incluída pelo lançamento expresso.", "etapa": "verbas"},
+      {"texto": "Quantidade de horas noturnas por competência (considerando a hora reduzida de 52min30s) deve ser informada ou apurada pelo cartão de ponto.", "etapa": "jornada", "confirmar": true},
+      {"texto": "Trabalhador rural tem regra própria (Lei nº 5.889/1973, art. 7º: 25%). Ajuste o percentual se for o caso.", "etapa": "verbas", "confirmar": true}
+    ],
+    "rascunho": {"verbas": ["ADICIONAL NOTURNO 20%"]}
+  },
+  {
+    "id": "insalubridade",
+    "nome": "Adicional de insalubridade",
+    "categoria": "Adicionais",
+    "versao": 1,
+    "revisadoEm": "2026-10-14",
+    "suporte": "parcial",
+    "descricao": "Adicional de insalubridade em grau mínimo, médio ou máximo (10%, 20% ou 40%).",
+    "fontes": ["CLT, arts. 189-192", "Súmula Vinculante 4 do STF", "Súmula 139 do TST"],
+    "premissas": [
+      {"texto": "Escolha a verba expressa do grau reconhecido em laudo/decisão: 10%, 20% ou 40%. O modelo inclui o grau médio (20%).", "etapa": "verbas", "confirmar": true},
+      {"texto": "Base de cálculo: confira no quadro de critérios (salário mínimo, piso ou outra base fixada na decisão).", "etapa": "verbas", "confirmar": true}
+    ],
+    "rascunho": {"verbas": ["ADICIONAL DE INSALUBRIDADE 20%"]}
+  },
+  {
+    "id": "periculosidade",
+    "nome": "Adicional de periculosidade",
+    "categoria": "Adicionais",
+    "versao": 1,
+    "revisadoEm": "2026-10-14",
+    "suporte": "parcial",
+    "descricao": "Adicional de 30% sobre o salário-base (sem acréscimos de gratificações, prêmios ou PLR).",
+    "fontes": ["CLT, art. 193, §1º", "Súmula 191 do TST", "Súmula 132 do TST"],
+    "premissas": [
+      {"texto": "Verba ADICIONAL DE PERICULOSIDADE 30% incluída pelo lançamento expresso.", "etapa": "verbas"},
+      {"texto": "O histórico usado como base deve conter apenas o salário-base.", "etapa": "historico", "confirmar": true},
+      {"texto": "Não cumulação com insalubridade (CLT, art. 193, §2º): confirme a opção do empregado.", "etapa": "verbas", "confirmar": true}
+    ],
+    "rascunho": {"verbas": ["ADICIONAL DE PERICULOSIDADE 30%"]}
+  },
+  {
+    "id": "fgts-indenizacao",
+    "nome": "FGTS não depositado e indenização rescisória",
+    "categoria": "FGTS",
+    "versao": 1,
+    "revisadoEm": "2026-10-14",
+    "suporte": "parcial",
+    "descricao": "FGTS sobre o histórico salarial nas competências sem depósito e multa de 40%.",
+    "fontes": ["Lei nº 8.036/1990, arts. 15 e 18", "Súmula 362 do TST", "STF, ARE 709.212 (Tema 608)"],
+    "premissas": [
+      {"texto": "Marque no histórico salarial a incidência de FGTS e, competência a competência, o que já foi recolhido.", "etapa": "historico", "confirmar": true},
+      {"texto": "Multa de 40% (dispensa sem justa causa).", "etapa": "reflexos"},
+      {"texto": "Prescrição do FGTS: a regra aplicável depende da data do ajuizamento e da modulação do Tema 608 — decisão do usuário.", "etapa": "contrato", "confirmar": true}
+    ],
+    "rascunho": {"fgts": {"multa": true, "multaDoFgts": "QUARENTA_POR_CENTO"}}
+  },
+  {
+    "id": "estimativa-inicial",
+    "nome": "Estimativa de pedidos para petição inicial",
+    "categoria": "Petição inicial",
+    "versao": 1,
+    "revisadoEm": "2026-10-14",
+    "suporte": "completo",
+    "descricao": "Cálculo prévio para indicar o valor de cada pedido (CLT, art. 840, §1º), processado pelo motor oficial.",
+    "fontes": ["CLT, art. 840, §1º (Lei nº 13.467/2017)", "IN 41/2018 do TST, art. 12, §2º (valor estimado)"],
+    "premissas": [
+      {"texto": "Os valores são estimativas para fins de petição: registre essa natureza nas observações do cálculo.", "etapa": "identificacao", "confirmar": true},
+      {"texto": "Sem número de processo: o PJe-Calc aceita o cálculo, mas avisa que ele não poderá ser anexado ao PJe.", "etapa": "identificacao"},
+      {"texto": "Inclua as verbas correspondentes a cada pedido; o modelo parte das rescisórias da dispensa sem justa causa.", "etapa": "verbas", "confirmar": true}
+    ],
+    "rascunho": {
+      "dados": {"contrato.apuracaoAvisoPrevio": "APURACAO_CALCULADA", "contrato.projetaAvisoIndenizado": true},
+      "verbas": ["SALDO DE SALÁRIO", "AVISO PRÉVIO", "13º SALÁRIO", "FÉRIAS + 1/3"],
+      "fgts": {"multa": true, "multaDoFgts": "QUARENTA_POR_CENTO"}
+    }
+  },
+  {
+    "id": "liquidacao-sentenca",
+    "nome": "Liquidação conforme sentença ou acórdão",
+    "categoria": "Liquidação de sentença",
+    "versao": 1,
+    "revisadoEm": "2026-10-14",
+    "suporte": "completo",
+    "descricao": "Roteiro para transcrever os parâmetros do título executivo, vinculando cada critério ao trecho da decisão.",
+    "fontes": ["CLT, art. 879", "CPC, arts. 509-512"],
+    "premissas": [
+      {"texto": "Cada verba deferida deve ser incluída com período, base, divisor, percentual, reflexos e incidências fixados no título.", "etapa": "verbas", "confirmar": true},
+      {"texto": "Registre no quadro de critérios o trecho da decisão que fundamenta cada escolha.", "etapa": "conferencia", "confirmar": true},
+      {"texto": "Correção monetária e juros conforme o título e a tese vinculante aplicável (ADC 58/59 do STF e Lei nº 14.905/2024) — decisão do usuário.", "etapa": "atualizacao", "confirmar": true}
+    ],
+    "rascunho": {}
+  },
+  {
+    "id": "atualizacao-conferencia",
+    "nome": "Atualização e conferência de cálculo existente",
+    "categoria": "Atualização de cálculo",
+    "versao": 1,
+    "revisadoEm": "2026-10-14",
+    "suporte": "completo",
+    "descricao": "Importe o .PJC existente, ajuste a data de liquidação e reprocesse no PJe-Calc para conferir ou atualizar valores.",
+    "fontes": ["Manual do PJe-Calc Cidadão (Importar / Liquidar)"],
+    "premissas": [
+      {"texto": "Use “Importar .PJC” no painel: o arquivo é importado pela tela oficial e os dados são lidos de volta.", "etapa": "identificacao"},
+      {"texto": "Dados regionais (feriados, pontos facultativos, pisos, vale-transporte) não acompanham o .PJC — confira na instalação local.", "etapa": "contrato", "confirmar": true},
+      {"texto": "Informe a nova data de liquidação na etapa Critérios de atualização.", "etapa": "atualizacao", "confirmar": true}
+    ],
+    "rascunho": {}
+  }
+]

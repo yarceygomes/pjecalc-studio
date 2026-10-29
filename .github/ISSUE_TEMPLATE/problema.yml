@@ -1,0 +1,34 @@
+name: Relatar um problema
+description: Algo não funcionou como esperado no PJe-Calc Studio.
+labels: ["problema"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Obrigado por avisar! **Não cole dados de processos reais** (nomes, CPF, valores, números de processo): esta página é pública.
+  - type: textarea
+    id: oque
+    attributes:
+      label: O que aconteceu?
+      description: O que você fez, o que esperava e o que apareceu. Copie a mensagem de erro, se houver.
+    validations:
+      required: true
+  - type: input
+    id: versao-studio
+    attributes:
+      label: Versão do PJe-Calc Studio
+      description: Aparece em Configurações › Atualizações.
+      placeholder: "0.2.0"
+  - type: input
+    id: versao-pjecalc
+    attributes:
+      label: Versão do PJe-Calc
+      description: Aparece no topo do Studio (por exemplo, "PJe-Calc 2.16.0 conectado").
+      placeholder: "2.16.0"
+  - type: dropdown
+    id: windows
+    attributes:
+      label: Windows
+      options:
+        - Windows 11
+        - Windows 10
