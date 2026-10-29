@@ -28,7 +28,9 @@ if ($LASTEXITCODE -ge 8) { throw "falha ao copiar o programa (robocopy $LASTEXIT
 #    gráfica (Tk), pip, IDLE, documentação nem pacotes de terceiros
 $py = Join-Path $destino "python"
 New-Item -ItemType Directory -Force $py | Out-Null
-Get-ChildItem $Python -File | Where-Object { $_.Extension -in ".exe", ".dll" -or $_.Name -eq "LICENSE.txt" } |
+#    Na raiz, só o interpretador e as DLLs dele: a pasta de um Python instalado pode guardar outros .exe (o
+#    Python do GitHub Actions traz o próprio instalador do python.org, com 32 MB) e as versões free-threaded.
+Get-ChildItem $Python -File | Where-Object { $_.Name -match '^(pythonw?\.exe|python3\d*\.dll|vcruntime140(_1)?\.dll|LICENSE\.txt)$' } |
     Copy-Item -Destination $py
 robocopy (Join-Path $Python "DLLs") (Join-Path $py "DLLs") /E /XF tcl*.dll tk*.dll _tkinter.pyd _test*.pyd *.pdb /NFL /NDL /NJH /NJS /NP | Out-Null
 if ($LASTEXITCODE -ge 8) { throw "falha ao copiar DLLs (robocopy $LASTEXITCODE)" }
@@ -41,7 +43,7 @@ if ($LASTEXITCODE -ge 8) { throw "falha ao copiar a biblioteca padrão (robocopy
 $teste = "import sys, os; assert os.path.samefile(sys.base_prefix, r'$py'), sys.base_prefix; " +
          "import http.server, urllib.request, json, zipfile, xml.etree.ElementTree, html.parser, http.cookiejar, " +
          "hashlib, secrets, unicodedata, decimal, threading, webbrowser, mimetypes, unittest; print('python ok', sys.version.split()[0])"
-& (Join-Path $py "python.exe") -I -c $teste
+& (Join-Path $py "python.exe") -I -B -c $teste  # -B: a conferência não deixa cache (.pyc) dentro do pacote
 if ($LASTEXITCODE -ne 0) { throw "o Python portátil não passou na conferência" }
 
 # 3b. guia ilustrado na raiz do pacote ("COMO USAR.html", abre com dois cliques e funciona offline)
