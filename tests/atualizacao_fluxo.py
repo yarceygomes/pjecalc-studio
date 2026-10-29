@@ -86,7 +86,7 @@ falha(lambda: Atualizador(raiz_instalada, "0.1.0", url=publicar(digest=False, sh
 falha(lambda: Atualizador(raiz_instalada, "0.1.0", url=publicar(nome="rascunho.json", extra={"draft": True})).verificar(), "não tem o instalador")
 falha(lambda: Atualizador(raiz_instalada, "0.1.0", url=publicar(nome="http.json", url="http://site.com/x.exe")).verificar(), "não tem o instalador")
 falha(lambda: Atualizador(raiz_instalada, "0.1.0", url="http://site-externo.com/latest.json").verificar(), "inválido")
-falha(lambda: Atualizador(raiz_instalada, "0.1.0", url="https://api.github.com/repos/yarceygomes/pjecalc-studio/releases/latest").verificar(), "não configuradas")
+falha(lambda: Atualizador(raiz_instalada, "0.1.0", url="https://api.github.com/repos/SEU-USUARIO/repositorio/releases/latest").verificar(), "não configuradas")  # marcador que publicar-no-github.ps1 não troca
 print("release incompleta, rascunho, sem HTTPS ou repositório não definido: recusado")
 
 # 5) repositório ainda sem nenhuma versão publicada (404): sem erro, sem versão nova
