@@ -3,7 +3,7 @@
 Cada versão publicada tem uma seção aqui. O texto da seção vira a página da versão no GitHub e o aviso de
 atualização dentro do Studio, então escreva para quem usa: curto e sem termos técnicos.
 
-## 0.2.2
+## 0.2.3
 
 - Não é mais preciso abrir o PJe-Calc antes: o Studio o encontra no computador e o abre sozinho, sem janela, em segundo plano.
 - O selo do topo mostra quando o PJe-Calc está iniciando; com ele fechado, um clique no selo o abre.
