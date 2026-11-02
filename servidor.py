@@ -42,7 +42,7 @@ from ponte.motor import ErroMotor, Motor, e_instalacao, localizar_instalacoes  #
 from ponte.relatorio import comparar_pjc, decimal_br, ler_pjc, ler_relatorio, moeda_br  # noqa: E402
 from ponte.tela import SessaoTela, Sessoes  # noqa: E402
 
-VERSAO_APP = "0.2.1"
+VERSAO_APP = "0.2.2"
 VERSOES_TESTADAS = ["2.16.0"]
 WEB = os.path.join(RAIZ, "web")
 ARMAZ: Armazenamento
