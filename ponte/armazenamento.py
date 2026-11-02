@@ -141,7 +141,8 @@ class Armazenamento:
     # ------------------------------------------------------------------ configuração
     def config(self) -> dict:
         padrao = {"urlPjecalc": "http://127.0.0.1:9257/pjecalc/", "usuario": "", "pastaInstalacao": "",
-                  "tema": "auto", "fonte": 100, "modo": "guiado", "logoEscritorio": "", "nomeEscritorio": ""}
+                  "tema": "auto", "fonte": 100, "modo": "guiado", "logoEscritorio": "", "nomeEscritorio": "",
+                  "iniciarPjecalc": True}
         cfg = _ler_json(os.path.join(self.pasta, "config.json"), {})
         return {**padrao, **(cfg or {})}
 

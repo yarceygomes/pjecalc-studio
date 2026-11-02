@@ -26,6 +26,8 @@ jobs:
         run: python -I tests/mcp_fluxo.py
       - name: Atualização automática
         run: python -I tests/atualizacao_fluxo.py
+      - name: Início automático do PJe-Calc
+        run: python -I tests/motor_fluxo.py
       - name: Pacote do instalador (monta, confere o Python embutido e mostra o tamanho de cada parte)
         shell: powershell
         run: |

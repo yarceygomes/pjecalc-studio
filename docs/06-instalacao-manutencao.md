@@ -9,7 +9,9 @@
 3. Baixe e execute o **PJeCalcStudio-Instalador.exe** da página de versões do projeto no GitHub (passo a passo
    no README). Ele instala só para o usuário, sem pedir administrador, já com o Python embutido.
    Para rodar pelo código-fonte, veja `docs/DESENVOLVIMENTO.md`.
-4. Abra o PJe-Calc pelo atalho oficial e, em seguida, o **PJe-Calc Studio** pelo menu Iniciar.
+4. Abra o **PJe-Calc Studio** pelo menu Iniciar. Ele localiza a instalação do PJe-Calc (a pasta com
+   `bin/pjecalc.jar` e `tomcat/`, preferindo a de banco usado mais recentemente) e o inicia sozinho, sem janela
+   (`ponte/motor.py`). Para desligar: **Configurações › Abrir o PJe-Calc automaticamente**.
 5. Em **Configurações**: informe seu nome (registro de alterações), confirme o endereço do PJe-Calc
    (`http://127.0.0.1:9257/pjecalc/`) e a **pasta de instalação** (habilita o diagnóstico e os textos
    de ajuda oficiais). Execute o **Diagnóstico**.

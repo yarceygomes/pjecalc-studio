@@ -226,6 +226,7 @@
   // ============================================================================ status do PJe-Calc
   async function atualizarStatus() {
     const pill = $("#statusMotor");
+    if (!pill.dataset.ligado) { pill.dataset.ligado = "1"; pill.addEventListener("click", abrirPjecalc); }
     try {
       const r = await api("GET", "/api/estado");
       E.config = r.config; E.motor = r.motor;
@@ -237,13 +238,31 @@
         pill.textContent = `PJe-Calc ${r.motor.versao || "?"} ${r.compativel ? "conectado" : "— versão não validada"}`;
         pill.title = `Build ${r.motor.build || "?"} em ${r.motor.url}`;
       } else {
-        pill.className = "pill pill-erro"; pill.textContent = "PJe-Calc desconectado";
-        pill.title = "Inicie o PJe-Calc pelo atalho oficial. Rascunhos continuam disponíveis offline.";
+        const ini = r.inicioAutomatico || {};
+        if (ini.situacao === "iniciando") {
+          pill.className = "pill pill-alerta"; pill.textContent = `Iniciando o PJe-Calc…${ini.segundos ? ` ${ini.segundos} s` : ""}`;
+          pill.title = "O Studio está abrindo o PJe-Calc em segundo plano (costuma levar de 30 s a 2 min). Pode continuar trabalhando.";
+          clearTimeout(E.reverStatus); E.reverStatus = setTimeout(atualizarStatus, 3000);  // acompanha a subida de perto
+        } else {
+          pill.className = "pill pill-erro"; pill.textContent = "PJe-Calc fechado · abrir";
+          pill.title = (ini.situacao === "erro" || ini.situacao === "sem_instalacao") && ini.mensagem ? ini.mensagem
+            : (ini.ligado ? "O Studio abre o PJe-Calc sozinho quando precisa dele. Clique para abrir agora." : "Clique para abrir o PJe-Calc agora.");
+        }
       }
       return r;
     } catch (e) {
       pill.className = "pill pill-erro"; pill.textContent = "Servidor local indisponível";
     }
+  }
+
+  // selo do PJe-Calc fechado: um clique o inicia (sem janela nem navegador; o Studio acompanha a subida)
+  async function abrirPjecalc() {
+    if (E.motor?.acessivel) return;
+    try {
+      const r = await api("POST", "/api/pjecalc/iniciar");
+      if (r.situacao === "erro" || r.situacao === "sem_instalacao") avisar(r.mensagem, "erro", 12000);
+    } catch (e) { avisar(e.message, "erro", 10000); }
+    atualizarStatus();
   }
 
   // ============================================================================ roteamento
@@ -3396,13 +3415,24 @@
       return { inp, el: h("div", { class: "campo" }, h("label", { for: id, text: rot }), inp, dica ? h("span", { class: "dica", text: dica }) : null) }; };
     const u = campoCfg("usuario", "Seu nome (registro de alterações)", "Aparece na trilha de auditoria de cada cálculo.");
     const url = campoCfg("urlPjecalc", "Endereço do PJe-Calc local", "Padrão: http://127.0.0.1:9257/pjecalc/ (porta definida pelo PJe-Calc).");
-    const pasta = campoCfg("pastaInstalacao", "Pasta de instalação do PJe-Calc", "Ex.: C:\\PJeCalc ou a pasta extraída do instalador. Usada no diagnóstico e para ler os textos de ajuda oficiais.");
+    const pasta = campoCfg("pastaInstalacao", "Pasta de instalação do PJe-Calc", "A pasta que tem o iniciarPjeCalc.bat. O Studio a encontra sozinho; mude só se tiver mais de uma instalação.");
     const esc = campoCfg("nomeEscritorio", "Nome do escritório (documentos complementares)");
+    const autoInp = h("input", { type: "checkbox", id: "cfg-iniciarPjecalc", checked: cfg.iniciarPjecalc !== false });
+    const auto = h("div", { class: "campo" }, h("label", { class: "marcacao", for: "cfg-iniciarPjecalc" }, autoInp, "Abrir o PJe-Calc automaticamente"),
+      h("span", { class: "dica", text: "O Studio abre o PJe-Calc sozinho, sem janela nem navegador, ao iniciar e quando precisar dele. Não é preciso abrir o PJe-Calc antes." }),
+      h("div", { class: "ferramentas", style: "margin-top:8px" },
+        h("button", { type: "button", class: "botao pequeno", onclick: async () => { await abrirPjecalc(); } }, "Abrir o PJe-Calc agora"),
+        h("button", { type: "button", class: "botao leve pequeno", onclick: async (ev) => {
+          if (!(await confirmar("Encerrar o PJe-Calc", "Encerrar o PJe-Calc agora? Salve antes o que estiver fazendo nas telas oficiais. O Studio o abre de novo quando precisar.", "Encerrar"))) return;
+          ev.currentTarget.disabled = true;
+          try { await api("POST", "/api/pjecalc/encerrar"); avisar("PJe-Calc encerrado.", "ok"); } catch (e) { avisar(e.message, "erro", 10000); }
+          ev.currentTarget.disabled = false; atualizarStatus();
+        } }, "Encerrar o PJe-Calc")));
     const logo = h("input", { type: "file", id: "cfgLogo", accept: "image/png,image/jpeg,image/svg+xml" });
     const diag = h("div", { "aria-live": "polite" }, h("p", { class: "sutil", text: "Clique em “Executar diagnóstico”." }));
     const bks = h("div");
     const salvar = async () => {
-      const novo = { usuario: u.inp.value, urlPjecalc: url.inp.value, pastaInstalacao: pasta.inp.value, nomeEscritorio: esc.inp.value };
+      const novo = { usuario: u.inp.value, urlPjecalc: url.inp.value, pastaInstalacao: pasta.inp.value, nomeEscritorio: esc.inp.value, iniciarPjecalc: autoInp.checked };
       if (logo.files[0]) { if (logo.files[0].size > 400000) { avisar("Logotipo muito grande (máx. 400 KB).", "erro"); return; } novo.logoEscritorio = await new Promise((ok) => { const fr = new FileReader(); fr.onload = () => ok(fr.result); fr.readAsDataURL(logo.files[0]); }); }
       try { await api("PUT", "/api/config", novo); avisar("Configurações salvas.", "ok"); E.ajudaOficial = null; carregarAjudaOficial(); atualizarStatus(); } catch (e) { avisar(e.message, "erro"); }
     };
@@ -3432,7 +3462,7 @@
     };
     preencher($("#conteudo"), h("h1", { text: "Configurações e diagnóstico" }),
       await cartaoAtualizacoes(),
-      h("section", { class: "cartao" }, h("h2", { text: "Preferências" }), h("div", { class: "grade" }, u.el, url.el, pasta.el, esc.el,
+      h("section", { class: "cartao" }, h("h2", { text: "Preferências" }), h("div", { class: "grade" }, u.el, url.el, pasta.el, auto, esc.el,
         h("div", { class: "campo" }, h("label", { for: "cfgLogo", text: "Logotipo (documentos complementares)" }), logo)), h("button", { class: "botao primario", style: "margin-top:12px", onclick: salvar }, "Salvar configurações")),
       h("section", { class: "cartao" }, h("h2", { text: "Diagnóstico da instalação" }), h("button", { class: "botao", onclick: rodarDiag }, "Executar diagnóstico"), diag),
       h("section", { class: "cartao" }, h("h2", { text: "Cópias de segurança desta interface" }),

@@ -26,6 +26,7 @@ Opções: `--porta`, `--dados <pasta>`, `--pjecalc <url do PJe-Calc>`, `--sem-na
 Sem o PJe-Calc (os mesmos que o GitHub roda a cada envio, `.github/workflows/testes.yml`):
 
 ```bash
+py -I tests/motor_fluxo.py
 py -I tests/test_unidades.py
 py -I tests/mcp_fluxo.py
 py -I tests/atualizacao_fluxo.py
@@ -66,6 +67,15 @@ Saída em `dist/`: `PJeCalcStudio-<versão>.exe`, a cópia `PJeCalcStudio-Instal
 
 No GitHub, o instalador é gerado sozinho a cada versão publicada (`.github/workflows/release.yml`); veja
 [PUBLICAR.md](../PUBLICAR.md).
+
+## Início automático do PJe-Calc
+
+`ponte/motor.py`: ao abrir o Studio e antes de cada rota que fala com o PJe-Calc (`PRECISAM_DO_PJECALC` em
+`servidor.py`), se o PJe-Calc não responder e a opção `iniciarPjecalc` estiver ligada (padrão), o Studio localiza a
+instalação (Configurações ou busca nas pastas habituais, a de banco usado mais recentemente primeiro, ignorando a
+caixa de testes) e sobe o Tomcat dela com os parâmetros do `iniciarPjeCalc.bat`, sem tela de abertura nem
+navegador (`javaw`, `org.apache.catalina.startup.Bootstrap start`). "Encerrar o PJe-Calc" usa `Bootstrap stop`.
+O registro fica em `dados/pjecalc-inicio.log`. Teste: `py -I tests/motor_fluxo.py` (sem o PJe-Calc real).
 
 ## Atualização automática
 

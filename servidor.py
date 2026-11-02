@@ -38,6 +38,7 @@ from ponte.armazenamento import (Armazenamento, ConflitoRevisao, agora, dentro_d
 from ponte.jsf import JsfError, fold  # noqa: E402
 from ponte.atualizacao import Atualizador, ErroAtualizacao  # noqa: E402
 from ponte.pjecalc import PJeCalc  # noqa: E402
+from ponte.motor import ErroMotor, Motor, e_instalacao, localizar_instalacoes  # noqa: E402
 from ponte.relatorio import comparar_pjc, decimal_br, ler_pjc, ler_relatorio, moeda_br  # noqa: E402
 from ponte.tela import SessaoTela, Sessoes  # noqa: E402
 
@@ -61,6 +62,67 @@ def _autor() -> str:
 
 def _url() -> str:
     return ARMAZ.config().get("urlPjecalc") or "http://127.0.0.1:9257/pjecalc/"
+
+
+# ---------------------------------------------------------------------------------------------
+# Início automático do PJe-Calc (ponte/motor.py): ao abrir o Studio e antes de cada operação que precisa dele.
+_MOTOR: list[Motor] = []
+
+
+def _motor() -> Motor:
+    if not _MOTOR:
+        _MOTOR.append(Motor(ARMAZ.pasta))
+    return _MOTOR[0]
+
+
+def _pasta_pjecalc() -> str | None:
+    """Pasta de instalação das Configurações; sem ela, a localizada sozinha (e gravada nas Configurações)."""
+    pasta = ARMAZ.config().get("pastaInstalacao") or ""
+    if e_instalacao(pasta):
+        return pasta
+    achadas = localizar_instalacoes()
+    if achadas:
+        ARMAZ.salvar_config({"pastaInstalacao": achadas[0]})
+        return achadas[0]
+    return pasta or None
+
+
+def _inicio_automatico() -> bool:
+    return ARMAZ.config().get("iniciarPjecalc", True) is not False
+
+
+def _garantir_pjecalc() -> None:
+    """Antes de falar com o PJe-Calc: se ele estiver fechado e o início automático ligado, inicia e espera."""
+    if not _inicio_automatico():
+        return
+    try:
+        _motor().garantir(_url(), _pasta_pjecalc())
+    except ErroMotor as e:
+        raise ErroApi(503, str(e)) from None
+
+
+def _iniciar_em_segundo_plano() -> None:
+    """Ao abrir o Studio: o PJe-Calc começa a subir enquanto a pessoa ainda está na tela inicial."""
+    if _inicio_automatico():
+        m = _motor()
+        if m.iniciar(_url(), _pasta_pjecalc())["situacao"] == "iniciando":
+            m.esperar(_url())
+
+
+def rota_pjecalc_iniciar(_h, _q, _b):
+    """Botão "Abrir o PJe-Calc": inicia sem esperar; a interface acompanha pela situação em /api/estado."""
+    estado = _motor().iniciar(_url(), _pasta_pjecalc())
+    if estado["situacao"] == "iniciando":
+        threading.Thread(target=_motor().esperar, args=(_url(),), daemon=True).start()
+    return estado
+
+
+def rota_pjecalc_encerrar(_h, _q, _b):
+    """Botão "Encerrar o PJe-Calc" (Configurações): o PJe-Calc aberto pelo Studio não tem janela nem ícone para fechar."""
+    try:
+        return _motor().encerrar(_url(), _pasta_pjecalc())
+    except ErroMotor as e:
+        raise ErroApi(409, str(e)) from None
 
 
 def _execucao(caso: dict, eid: str) -> dict:
@@ -152,7 +214,8 @@ def rota_estado(_h, _q, _b):
     return {"app": VERSAO_APP, "config": {k: v for k, v in cfg.items() if k != "logoEscritorio"},
             "temLogo": bool(cfg.get("logoEscritorio")), "motor": diag,
             "compativel": diag.get("versao") in VERSOES_TESTADAS if diag.get("versao") else None,
-            "versoesTestadas": VERSOES_TESTADAS, "atualizacao": _atualizador().estado()}
+            "versoesTestadas": VERSOES_TESTADAS, "atualizacao": _atualizador().estado(),
+            "inicioAutomatico": {**_motor().estado(), "ligado": _inicio_automatico()}}
 
 
 def rota_diagnostico(_h, _q, _b):
@@ -176,8 +239,12 @@ def rota_diagnostico(_h, _q, _b):
             inst["erro"] = str(e)
     avisos = []
     if not diag.get("acessivel"):
-        avisos.append({"nivel": "impeditivo", "texto": f"O PJe-Calc não respondeu em {_url()}. Inicie-o pelo atalho "
-                       "oficial (iniciarPjeCalc.bat) e aguarde a abertura da tela inicial."})
+        texto = (f"O PJe-Calc não respondeu em {_url()}. " + (
+            "O Studio inicia o PJe-Calc sozinho quando precisa dele; use “Abrir o PJe-Calc” para iniciar agora."
+            if _inicio_automatico() else "Inicie-o pelo atalho oficial (iniciarPjeCalc.bat) e aguarde a abertura da tela inicial."))
+        if _motor().estado()["situacao"] in ("erro", "sem_instalacao"):
+            texto += " " + _motor().estado()["mensagem"]
+        avisos.append({"nivel": "impeditivo", "texto": texto})
     elif diag.get("versao") not in VERSOES_TESTADAS:
         avisos.append({"nivel": "alerta", "texto": f"Versão {diag.get('versao')} do PJe-Calc ainda não foi validada com esta "
                        f"interface (validadas: {', '.join(VERSOES_TESTADAS)}). Rode o roteiro de equivalência antes do uso."})
@@ -190,7 +257,7 @@ def rota_diagnostico(_h, _q, _b):
 
 def rota_config(_h, _q, b):
     permitidos = {"urlPjecalc", "usuario", "pastaInstalacao", "tema", "fonte", "modo", "logoEscritorio", "nomeEscritorio",
-                  "modeloPadrao"}
+                  "modeloPadrao", "iniciarPjecalc"}
     novo = {k: v for k, v in (b or {}).items() if k in permitidos}
     if "urlPjecalc" in novo:
         u = urllib.parse.urlparse(novo["urlPjecalc"])
@@ -198,6 +265,8 @@ def rota_config(_h, _q, b):
             raise ErroApi(400, "Por segurança, a interface só opera um PJe-Calc local (http://127.0.0.1:<porta>/pjecalc/).")
         if not novo["urlPjecalc"].endswith("/"):
             novo["urlPjecalc"] += "/"
+    if "iniciarPjecalc" in novo:
+        novo["iniciarPjecalc"] = novo["iniciarPjecalc"] is True
     if "logoEscritorio" in novo and novo["logoEscritorio"] and not str(novo["logoEscritorio"]).startswith("data:image/"):
         raise ErroApi(400, "Logotipo inválido.")
     cfg = ARMAZ.salvar_config(novo)
@@ -795,6 +864,8 @@ def _despachar_interno(metodo: str, caminho: str, corpo=None):
         if m_rota != metodo or not m or fn in BINARIAS:
             continue
         try:
+            if fn in PRECISAM_DO_PJECALC:
+                _garantir_pjecalc()
             return fn(None, q, corpo, *m.groups())
         except ErroApi as e:
             raise assistente.ErroStudio(e.mensagem, e.status) from None
@@ -938,8 +1009,13 @@ ROTAS = [
     ("POST", r"/api/claude/instalar-desktop", rota_claude_instalar),
     ("POST", r"/api/claude/conectar", rota_claude_conectar),
     ("POST", r"/api/claude/nova-chave", rota_claude_nova_chave),
+    ("POST", r"/api/pjecalc/iniciar", rota_pjecalc_iniciar),
+    ("POST", r"/api/pjecalc/encerrar", rota_pjecalc_encerrar),
 ]
 BINARIAS = {rota_importar_pjc, rota_ler_planilha, rota_tela_upload}
+# rotas que falam com o PJe-Calc: antes delas, o início automático garante que ele está aberto
+PRECISAM_DO_PJECALC = {rota_gravar, rota_executar, rota_parametros_verbas, rota_ocorrencias_verba, rota_assuntos_cnj,
+                       rota_abrir_tela, rota_calculos_do_pjecalc, rota_trazer_do_pjecalc, rota_importar_pjc, rota_municipios}
 assistente.configurar(_despachar_interno, VERSAO_APP)
 
 
@@ -1013,6 +1089,8 @@ class Handler(BaseHTTPRequestHandler):
                 continue
             try:
                 bruto = self._ler_corpo()
+                if fn in PRECISAM_DO_PJECALC:
+                    _garantir_pjecalc()
                 if fn in BINARIAS:
                     r = fn(self, q, bruto, *m.groups())
                 else:
@@ -1176,6 +1254,7 @@ def main():
         return 1
     print(f"PJe-Calc Studio {VERSAO_APP} em {url}  (dados: {ARMAZ.pasta}; PJe-Calc: {_url()})", flush=True)
     threading.Thread(target=_tarefas_periodicas, daemon=True).start()  # silencioso; sem internet, segue no prazo offline
+    threading.Thread(target=_iniciar_em_segundo_plano, daemon=True).start()  # o PJe-Calc sobe enquanto a tela inicial abre
     try:
         _escrever_conexao()  # para o Claude encontrar este Studio (Assistente Claude)
     except OSError as e:

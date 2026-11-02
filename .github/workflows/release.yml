@@ -41,6 +41,7 @@ jobs:
           python -I tests/test_unidades.py
           python -I tests/mcp_fluxo.py
           python -I tests/atualizacao_fluxo.py
+          python -I tests/motor_fluxo.py
 
       - name: Instalar o Inno Setup
         run: choco install innosetup --no-progress -y

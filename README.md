@@ -30,10 +30,10 @@ instalar Python nem mais nada.
 
 ## Uso no dia a dia
 
-1. Abra o **PJe-Calc** pelo atalho oficial e espere a tela inicial aparecer.
-2. Abra o **PJe-Calc Studio** pelo menu Iniciar (ou pelo atalho da Área de Trabalho). Ele abre no navegador, em
-   `http://127.0.0.1:8765/`.
-3. Crie um cálculo (em branco, a partir de um modelo, importando um `.PJC` ou trazendo um cálculo que já está no
+1. Abra o **PJe-Calc Studio** pelo menu Iniciar (ou pelo atalho da Área de Trabalho). Ele abre no navegador, em
+   `http://127.0.0.1:8765/`. **Não é preciso abrir o PJe-Calc antes:** o Studio o encontra no computador e o abre
+   sozinho, sem janela, em segundo plano (o selo no topo mostra "Iniciando o PJe-Calc…" e, em seguida, "conectado").
+2. Crie um cálculo (em branco, a partir de um modelo, importando um `.PJC` ou trazendo um cálculo que já está no
    PJe-Calc) e siga as etapas. **Enviar ao PJe-Calc** preenche as telas oficiais; **Calcular** liquida e guarda o
    relatório oficial (HTML e PDF) e o `.PJC`.
 
@@ -75,7 +75,7 @@ o Studio não pede nem guarda senha ou chave de IA.
 
 | O que aparece | O que fazer |
 |---|---|
-| "PJe-Calc desconectado" | Abra o PJe-Calc pelo atalho oficial e espere a tela inicial. Em **Configurações**, o botão **Diagnóstico** testa a ligação. |
+| "PJe-Calc fechado" | Clique no selo para abri-lo agora. Se o Studio não encontrar o PJe-Calc, informe a pasta dele (a que tem o `iniciarPjeCalc.bat`) em **Configurações**; o botão **Diagnóstico** testa a ligação. |
 | A página do Studio não abre | Abra o PJe-Calc Studio pelo menu Iniciar de novo, ou acesse `http://127.0.0.1:8765/` no navegador. |
 | "Versão do PJe-Calc não validada" | O Studio foi testado com o PJe-Calc 2.16.0. Em outras versões ele funciona, mas confira o resultado no relatório oficial. |
 | Outro problema | Abra uma [issue](https://github.com/yarceygomes/pjecalc-studio/issues/new/choose) contando o que aconteceu. |

@@ -14,10 +14,10 @@ O QUE VOCE PRECISA
   - Nao precisa instalar Python nem mais nada: ele ja vem junto.
 
 USO (todo dia)
-  1. Abra o PJe-Calc pelo atalho oficial e espere a tela inicial aparecer.
-  2. Abra o "PJe-Calc Studio" pelo menu Iniciar (ou pelo atalho da Area de Trabalho).
+  1. Abra o "PJe-Calc Studio" pelo menu Iniciar (ou pelo atalho da Area de Trabalho).
      O navegador abre em  http://127.0.0.1:8765/
-  3. Pode fechar a aba do navegador quando quiser: o Studio continua aberto em segundo plano
+     Nao precisa abrir o PJe-Calc antes: o Studio o encontra e o abre sozinho, sem janela.
+  2. Pode fechar a aba do navegador quando quiser: o Studio continua aberto em segundo plano
      e o atalho abre a aba de novo.
 
 PRIMEIROS PASSOS
@@ -37,7 +37,9 @@ ATUALIZACOES
     um clique baixa, instala e reabre o Studio.
 
 PROBLEMAS COMUNS
-  - "PJe-Calc desconectado": abra o PJe-Calc pelo atalho oficial e aguarde a tela inicial.
+  - "PJe-Calc fechado": clique no selo do topo para abri-lo. Se o Studio nao achar o PJe-Calc,
+    informe a pasta dele (a que tem o iniciarPjeCalc.bat) em Configuracoes.
+  - Para fechar o PJe-Calc aberto pelo Studio: Configuracoes > Encerrar o PJe-Calc.
   - A pagina nao abre: abra o PJe-Calc Studio pelo menu Iniciar de novo, ou acesse
     http://127.0.0.1:8765/ no navegador.
   - Outras duvidas e problemas: pagina do projeto no GitHub, aba "Issues".

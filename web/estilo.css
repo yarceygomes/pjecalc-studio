@@ -709,3 +709,5 @@ details.mais-opcoes[open] > summary { margin-bottom: var(--e3); }
 .passo-claude p { margin: 4px 0; }
 
 a.pill { text-decoration: none; }
+button.pill { border: 0; font: inherit; font-size: .75rem; font-weight: 600; cursor: pointer; }
+button.pill.pill-ok { cursor: default; }

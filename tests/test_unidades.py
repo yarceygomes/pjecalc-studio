@@ -479,7 +479,7 @@ class Servidor(unittest.TestCase):
         import servidor
         cls.tmp = tempfile.TemporaryDirectory()
         servidor.ARMAZ = armazenamento.Armazenamento(cls.tmp.name)
-        servidor.ARMAZ.salvar_config({"urlPjecalc": "http://127.0.0.1:9/pjecalc/"})  # porta sem serviço
+        servidor.ARMAZ.salvar_config({"urlPjecalc": "http://127.0.0.1:9/pjecalc/", "iniciarPjecalc": False})  # porta sem serviço; nunca inicia o PJe-Calc real
         cls.srv = servidor.Servidor(("127.0.0.1", 0), servidor.Handler)
         servidor.PORTA = cls.srv.server_address[1]
         threading.Thread(target=cls.srv.serve_forever, daemon=True).start()
