@@ -36,12 +36,15 @@ jobs:
           if ($tag -ne $versao) { throw "A tag v$tag não bate com VERSAO_APP = $versao em servidor.py." }
           if (-not (Select-String -Path NOVIDADES.md -Pattern "^## $([regex]::Escape($versao))\b" -Quiet)) { throw "NOVIDADES.md não tem a seção '## $versao'." }
 
-      - name: Testes
-        run: |
-          python -I tests/test_unidades.py
-          python -I tests/mcp_fluxo.py
-          python -I tests/atualizacao_fluxo.py
-          python -I tests/motor_fluxo.py
+      # um passo por teste: se algo falhar, a página da execução mostra qual
+      - name: Testes unitários
+        run: python -I tests/test_unidades.py
+      - name: Teste do assistente (MCP)
+        run: python -I tests/mcp_fluxo.py
+      - name: Teste da atualização automática
+        run: python -I tests/atualizacao_fluxo.py
+      - name: Teste do início automático do PJe-Calc
+        run: python -I tests/motor_fluxo.py
 
       - name: Instalar o Inno Setup
         run: choco install innosetup --no-progress -y
